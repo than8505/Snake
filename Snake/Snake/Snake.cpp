@@ -2,8 +2,8 @@
 #include <vector>
 #include <thread>
 #include <chrono>
-#include <cstdlib> // rand, srand
-#include <ctime>   // time
+#include <cstdlib>   // rand, srand
+#include <ctime>     // time
 
 #if defined(_WIN32) || defined(_WIN64)
 #include <conio.h>
@@ -19,28 +19,20 @@ using namespace std;
 //----------------------------------
 // Cấu trúc tọa độ
 //----------------------------------
-struct Point
-{
+struct Point {
     int x, y;
 };
 
 //----------------------------------
 // Hướng di chuyển
 //----------------------------------
-enum Direction
-{
-    UP,
-    DOWN,
-    LEFT,
-    RIGHT
-};
+enum Direction { UP, DOWN, LEFT, RIGHT };
 
 //----------------------------------
 // Hỗ trợ nhập bàn phím (Windows/Linux)
 //----------------------------------
 #if !(defined(_WIN32) || defined(_WIN64))
-int kbhit()
-{
+int kbhit() {
     struct timeval tv = { 0, 0 };
     fd_set fds;
     FD_ZERO(&fds);
@@ -48,48 +40,70 @@ int kbhit()
     return select(STDIN_FILENO + 1, &fds, nullptr, nullptr, &tv);
 }
 
-int getch_noblock()
-{
+int getch_noblock() {
     char c = 0;
-    if (kbhit())
-    {
-        if (read(STDIN_FILENO, &c, 1) == 1)
-            return (int)c;
+    if (kbhit()) {
+        if (read(STDIN_FILENO, &c, 1) == 1) return (int)c;
     }
     return 0;
 }
 
-struct TermGuard
-{
+struct TermGuard {
     termios oldt;
-    TermGuard()
-    {
+    TermGuard() {
         tcgetattr(STDIN_FILENO, &oldt);
         termios newt = oldt;
         newt.c_lflag &= ~(ICANON | ECHO);
         tcsetattr(STDIN_FILENO, TCSANOW, &newt);
     }
-    ~TermGuard()
-    {
+    ~TermGuard() {
         tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
     }
 };
 #endif
 
 //----------------------------------
-// Hàm vẽ rắn (đã bỏ khung và thức ăn)
+// Hàm tạo thức ăn ngẫu nhiên
 //----------------------------------
-void draw(const vector<Point>& snake, int width, int height, int score)
-{
+Point randomFood(int width, int height, const vector<Point>& snake) {
+    Point food;
+    bool valid = false;
+    while (!valid) {
+        food.x = rand() % (width - 2) + 1;
+        food.y = rand() % (height - 2) + 1;
+        valid = true;
+        // tránh spawn lên thân rắn
+        for (auto& s : snake)
+            if (s.x == food.x && s.y == food.y)
+                valid = false;
+    }
+    return food;
+}
+
+//----------------------------------
+// Hàm vẽ khung + rắn + thức ăn
+//----------------------------------
+void draw(const vector<Point>& snake, Point food, int width, int height, int score) {
     vector<string> screen(height, string(width, ' '));
+
+    for (int x = 0; x < width; ++x) {
+        screen[0][x] = '#';
+        screen[height - 1][x] = '#';
+    }
+    for (int y = 0; y < height; ++y) {
+        screen[y][0] = '#';
+        screen[y][width - 1] = '#';
+    }
 
     // rắn
     bool head = true;
-    for (auto& p : snake)
-    {
-        if (p.x >= 0 && p.x < width && p.y >= 0 && p.y < height) // Điều chỉnh để vẽ cả khi chạm biên
+    for (auto& p : snake) {
+        if (p.x > 0 && p.x < width - 1 && p.y > 0 && p.y < height - 1)
             screen[p.y][p.x] = head ? 'O' : 'o', head = false;
     }
+
+    // thức ăn
+    screen[food.y][food.x] = '*';
 
 #ifdef _WIN32
     system("cls");
@@ -97,44 +111,29 @@ void draw(const vector<Point>& snake, int width, int height, int score)
     system("clear");
 #endif
 
-    for (auto& row : screen)
-        cout << row << '\n';
+    for (auto& row : screen) cout << row << '\n';
     cout << "Score: " << score << " | ↑/↓/←/→ or W/A/S/D to Control | Q to Exit\n";
 }
 
 //----------------------------------
 // Hàm di chuyển rắn
 //----------------------------------
-void moveSnake(vector<Point>& snake, Direction dir, int width, int height, bool grow)
-{
+void moveSnake(vector<Point>& snake, Direction dir, int width, int height, bool grow) {
     Point head = snake.front();
     Point newHead = head;
 
-    switch (dir)
-    {
-    case UP:
-        newHead.y--;
-        break;
-    case DOWN:
-        newHead.y++;
-        break;
-    case LEFT:
-        newHead.x--;
-        break;
-    case RIGHT:
-        newHead.x++;
-        break;
+    switch (dir) {
+    case UP:    newHead.y--; break;
+    case DOWN:  newHead.y++; break;
+    case LEFT:  newHead.x--; break;
+    case RIGHT: newHead.x++; break;
     }
 
-    // vòng lại (thay vì 0 và width-1, ta dùng -1 và width/height)
-    if (newHead.x < 0)
-        newHead.x = width - 1;
-    if (newHead.x >= width)
-        newHead.x = 0;
-    if (newHead.y < 0)
-        newHead.y = height - 1;
-    if (newHead.y >= height)
-        newHead.y = 0;
+    // vòng lại
+    if (newHead.x <= 0) newHead.x = width - 2;
+    if (newHead.x >= width - 1) newHead.x = 1;
+    if (newHead.y <= 0) newHead.y = height - 2;
+    if (newHead.y >= height - 1) newHead.y = 1;
 
     snake.insert(snake.begin(), newHead);
     if (!grow)
@@ -144,8 +143,7 @@ void moveSnake(vector<Point>& snake, Direction dir, int width, int height, bool 
 //----------------------------------
 // Chương trình chính
 //----------------------------------
-int main()
-{
+int main() {
     srand(time(nullptr));
 
     int width = 40, height = 15;
@@ -164,93 +162,67 @@ int main()
     TermGuard tg;
 #endif
 
-  
-    while (running)
-    {
+    // tạo mục tiêu đầu tiên
+    Point food = randomFood(width, height, snake);
+
+    while (running) {
         // xử lý phím
 #if defined(_WIN32) || defined(_WIN64)
-        if (_kbhit())
-        {
+        if (_kbhit()) {
             int c = _getch();
-            if (c == 0 || c == 224)
-            {
+            if (c == 0 || c == 224) {
                 int ext = _getch();
-                if (ext == 72 && dir != DOWN)
-                    dir = UP;
-                else if (ext == 80 && dir != UP)
-                    dir = DOWN;
-                else if (ext == 75 && dir != RIGHT)
-                    dir = LEFT;
-                else if (ext == 77 && dir != LEFT)
-                    dir = RIGHT;
+                if (ext == 72) dir = UP;
+                else if (ext == 80) dir = DOWN;
+                else if (ext == 75) dir = LEFT;
+                else if (ext == 77) dir = RIGHT;
             }
-            else
-            {
+            else {
                 char ch = (char)c;
-                if ((ch == 'w' || ch == 'W') && dir != DOWN)
-                    dir = UP;
-                else if ((ch == 's' || ch == 'S') && dir != UP)
-                    dir = DOWN;
-                else if ((ch == 'a' || ch == 'A') && dir != RIGHT)
-                    dir = LEFT;
-                else if ((ch == 'd' || ch == 'D') && dir != LEFT)
-                    dir = RIGHT;
-                else if (ch == 'q' || ch == 'Q')
-                    running = false;
+                if (ch == 'w' || ch == 'W') dir = UP;
+                else if (ch == 's' || ch == 'S') dir = DOWN;
+                else if (ch == 'a' || ch == 'A') dir = LEFT;
+                else if (ch == 'd' || ch == 'D') dir = RIGHT;
+                else if (ch == 'q' || ch == 'Q') running = false;
             }
         }
 #else
         int c = getch_noblock();
-        if (c != 0)
-        {
-            if (c == 27)
-            { // arrow keys
-                if (kbhit())
-                {
+        if (c != 0) {
+            if (c == 27) { // arrow keys
+                if (kbhit()) {
                     int c2 = getchar();
-                    if (c2 == '[' && kbhit())
-                    {
+                    if (c2 == '[' && kbhit()) {
                         int c3 = getchar();
-                        if (c3 == 'A' && dir != DOWN)
-                            dir = UP;
-                        else if (c3 == 'B' && dir != UP)
-                            dir = DOWN;
-                        else if (c3 == 'C' && dir != LEFT)
-                            dir = RIGHT;
-                        else if (c3 == 'D' && dir != RIGHT)
-                            dir = LEFT;
+                        if (c3 == 'A') dir = UP;
+                        else if (c3 == 'B') dir = DOWN;
+                        else if (c3 == 'C') dir = RIGHT;
+                        else if (c3 == 'D') dir = LEFT;
                     }
                 }
             }
-            else
-            {
+            else {
                 char ch = (char)c;
-                if ((ch == 'w' || ch == 'W') && dir != DOWN)
-                    dir = UP;
-                else if ((ch == 's' || ch == 'S') && dir != UP)
-                    dir = DOWN;
-                else if ((ch == 'a' || ch == 'A') && dir != RIGHT)
-                    dir = LEFT;
-                else if ((ch == 'd' || ch == 'D') && dir != LEFT)
-                    dir = RIGHT;
-                else if (ch == 'q' || ch == 'Q')
-                    running = false;
+                if (ch == 'w' || ch == 'W') dir = UP;
+                else if (ch == 's' || ch == 'S') dir = DOWN;
+                else if (ch == 'a' || ch == 'A') dir = LEFT;
+                else if (ch == 'd' || ch == 'D') dir = RIGHT;
+                else if (ch == 'q' || ch == 'Q') running = false;
             }
         }
 #endif
 
-       
-        bool grow = false; 
+        // kiểm tra ăn thức ăn
+        bool grow = false;
+        Point head = snake.front();
+        if (head.x == food.x && head.y == food.y) {
+            score++;
+            grow = true;
+            food = randomFood(width, height, snake);
+        }
 
         moveSnake(snake, dir, width, height, grow);
-        draw(snake, width, height, score); 
-        Point head = snake.front();
-        for (size_t i = 1; i < snake.size(); ++i) {
-            if (head.x == snake[i].x && head.y == snake[i].y) {
-                running = false;
-                break;
-            }
-        }
+        draw(snake, food, width, height, score);
 
         this_thread::sleep_for(chrono::milliseconds(150));
     }

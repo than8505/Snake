@@ -1,9 +1,9 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\DELL\\Desktop\\Snake\\Snake\\",
+  "WorkspaceRootPath": "C:\\Users\\HP\\OneDrive\\Desktop\\Snake\\Snake\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{2E0775CD-4A06-42C2-94B7-3ACF518490B0}|Snake\\Snake.vcxproj|C:\\Users\\DELL\\Desktop\\Snake\\Snake\\Snake\\Snake.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "AbsoluteMoniker": "D:0:0:{2E0775CD-4A06-42C2-94B7-3ACF518490B0}|Snake\\Snake.vcxproj|C:\\Users\\HP\\OneDrive\\Desktop\\Snake\\Snake\\Snake\\Snake.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{2E0775CD-4A06-42C2-94B7-3ACF518490B0}|Snake\\Snake.vcxproj|solutionrelative:Snake\\Snake.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     }
   ],
@@ -20,11 +20,11 @@
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "Snake.cpp",
-              "DocumentMoniker": "C:\\Users\\DELL\\Desktop\\Snake\\Snake\\Snake\\Snake.cpp",
+              "DocumentMoniker": "C:\\Users\\HP\\OneDrive\\Desktop\\Snake\\Snake\\Snake\\Snake.cpp",
               "RelativeDocumentMoniker": "Snake\\Snake.cpp",
-              "ToolTip": "C:\\Users\\DELL\\Desktop\\Snake\\Snake\\Snake\\Snake.cpp",
+              "ToolTip": "C:\\Users\\HP\\OneDrive\\Desktop\\Snake\\Snake\\Snake\\Snake.cpp",
               "RelativeToolTip": "Snake\\Snake.cpp",
-              "ViewState": "AgIAADwAAAAAAAAAAAAAAFsAAAAFAAAAAAAAAA==",
+              "ViewState": "AgIAAIIAAAAAAAAAAAAQwJYAAAAbAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-11-16T15:34:06.092Z",
               "EditorCaption": ""

@@ -1,7 +1,7 @@
 ﻿  Snake.cpp
-C:\Users\DELL\Desktop\Snake\Snake\Snake\Snake.cpp(102,35): warning C4566: character represented by universal-character-name '\u2191' cannot be represented in the current code page (1252)
-C:\Users\DELL\Desktop\Snake\Snake\Snake\Snake.cpp(102,35): warning C4566: character represented by universal-character-name '\u2193' cannot be represented in the current code page (1252)
-C:\Users\DELL\Desktop\Snake\Snake\Snake\Snake.cpp(102,35): warning C4566: character represented by universal-character-name '\u2190' cannot be represented in the current code page (1252)
-C:\Users\DELL\Desktop\Snake\Snake\Snake\Snake.cpp(102,35): warning C4566: character represented by universal-character-name '\u2192' cannot be represented in the current code page (1252)
-C:\Users\DELL\Desktop\Snake\Snake\Snake\Snake.cpp(149,15): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-  Snake.vcxproj -> C:\Users\DELL\Desktop\Snake\Snake\x64\Debug\Snake.exe
+C:\Users\HP\OneDrive\Desktop\Snake\Snake\Snake\Snake.cpp(115,35): warning C4566: character represented by universal-character-name '\u2191' cannot be represented in the current code page (1252)
+C:\Users\HP\OneDrive\Desktop\Snake\Snake\Snake\Snake.cpp(115,35): warning C4566: character represented by universal-character-name '\u2193' cannot be represented in the current code page (1252)
+C:\Users\HP\OneDrive\Desktop\Snake\Snake\Snake\Snake.cpp(115,35): warning C4566: character represented by universal-character-name '\u2190' cannot be represented in the current code page (1252)
+C:\Users\HP\OneDrive\Desktop\Snake\Snake\Snake\Snake.cpp(115,35): warning C4566: character represented by universal-character-name '\u2192' cannot be represented in the current code page (1252)
+C:\Users\HP\OneDrive\Desktop\Snake\Snake\Snake\Snake.cpp(147,15): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  Snake.vcxproj -> C:\Users\HP\OneDrive\Desktop\Snake\Snake\x64\Debug\Snake.exe
